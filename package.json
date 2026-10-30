@@ -1,0 +1,27 @@
+{
+  "name": "form-tester",
+  "version": "1.0.0",
+  "description": "Fill and submit web forms with random/fake data via Playwright or a bookmarklet",
+  "type": "module",
+  "bin": {
+    "form-tester": "src/cli.js"
+  },
+  "scripts": {
+    "postinstall": "playwright install chromium",
+    "start": "node src/cli.js",
+    "ui": "node src/cli.js --ui",
+    "build:pages": "node scripts/build-pages.js",
+    "build:extension": "node scripts/build-extension.js",
+    "package": "node scripts/package-extension.js",
+    "store-assets": "node scripts/store-assets.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}

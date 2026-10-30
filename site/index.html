@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field Day: test any web form in one click</title>
+<meta name="description" content="Field Day fills web forms with realistic test data, steps through multi-step forms, finds conditional fields, and submits. A browser extension for Edge and Chrome, plus a bookmarklet.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="logo.svg" alt="" width="42" height="42">Field Day</a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="#ways">Get it</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="https://github.com/r3hab-media/field-day">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="hero wrap">
+    <h1>Test any web form in one click.</h1>
+    <p class="lead">Field Day fills out web forms with realistic test data, clicks through multi-step forms, finds conditional fields, and submits. It pauses for you when there's a CAPTCHA.</p>
+    <div class="actions">
+      <a class="btn" href="#ways">Get Field Day</a>
+      <a class="btn alt" href="demo.html">Try the demo form</a>
+    </div>
+    <figure class="shot">
+      <img src="screenshot-fill.png" width="1280" height="800" alt="The Field Day panel beside a demo contact form. Every field is filled with made-up details, and the panel lists each value it entered.">
+    </figure>
+  </div>
+
+  <section class="wrap" aria-labelledby="what">
+    <h2 id="what">What it does</h2>
+    <ul class="cards">
+      <li class="card">
+        <span class="tag">Fill</span>
+        <h3>Every kind of field</h3>
+        <ul>
+          <li>Believable names, emails, phone numbers, addresses and messages</li>
+          <li>Random picks in dropdowns, radio buttons and checkboxes, including custom dropdowns</li>
+          <li>Dates, numbers, sliders and file uploads</li>
+          <li>Ticks required boxes and skips hidden honeypot fields</li>
+        </ul>
+      </li>
+      <li class="card">
+        <span class="tag green">Submit</span>
+        <h3>Real-world forms</h3>
+        <ul>
+          <li>Clicks "Next" through multi-step forms</li>
+          <li>Reaches forms embedded from other sites, such as HubSpot</li>
+          <li>Waits for you to solve a CAPTCHA, then submits</li>
+          <li>Tells you whether the submission went through</li>
+        </ul>
+      </li>
+      <li class="card">
+        <span class="tag pink">Branch</span>
+        <h3>Every path through the form</h3>
+        <ul>
+          <li>Finds fields that only appear for certain answers</li>
+          <li>Plans the fewest runs that cover every branch</li>
+          <li>Runs several entries back to back with auto-continue</li>
+          <li>Your own email pattern and pinned values for any field</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section class="wrap" id="ways" aria-labelledby="ways-title">
+    <h2 id="ways-title">Three ways to use it</h2>
+    <ul class="cards">
+      <li class="card">
+        <span class="tag">Recommended</span>
+        <h3>Browser extension</h3>
+        <p>For Edge and Chrome. Right-click any page and choose <b>Field Day: fill a form on this page</b>, or click its toolbar button. It reaches forms embedded from other websites, and its panel reopens by itself when a test reloads the page.</p>
+        <p>Coming soon to the Chrome Web Store and Edge Add-ons. Until then, <a href="https://github.com/r3hab-media/field-day#option-1-the-browser-extension-recommended">install it from the source</a>.</p>
+      </li>
+      <li class="card">
+        <span class="tag blue">No install</span>
+        <h3>Bookmarklet</h3>
+        <p>Drag this button to your bookmarks bar:</p>
+        <p><a class="btn drag" href="{{BOOKMARKLET_HREF}}" onclick="alert('Drag this to your bookmarks bar, then click it on a page with a form.'); return false;">Field Day</a></p>
+        <ol>
+          <li>Open the page with the form.</li>
+          <li>Click the <b>Field Day</b> bookmark. A panel lists every form on the page.</li>
+          <li>Pick a form (hover to highlight it), set options, and click <b>Fill form</b>.</li>
+        </ol>
+        <p class="muted">Bookmarklets can't reach forms inside frames from other websites, and strict security settings may block them. Use the extension or the local tool for those.</p>
+      </li>
+      <li class="card">
+        <span class="tag green">For repeat runs</span>
+        <h3>Local tool</h3>
+        <p>Enter a URL and it handles the rest with Playwright, including embedded forms and trusted clicks. Needs Node.js 20 or newer.</p>
+        <pre><code>git clone https://github.com/r3hab-media/field-day.git
+cd field-day
+npm install
+npm run ui</code></pre>
+      </li>
+    </ul>
+  </section>
+
+  <section class="wrap" aria-labelledby="careful">
+    <h2 id="careful" class="visually-hidden">Before you start</h2>
+    <div class="note">
+      <p><b>Only test forms you own or have permission to test.</b> Every submission is real: it may send emails, create records, or notify people. Untick "Submit after filling" to fill a form without sending it.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <ul>
+      <li><a href="privacy.html">Privacy policy</a></li>
+      <li><a href="demo.html">Demo form</a></li>
+      <li><a href="https://github.com/r3hab-media/field-day">Source on GitHub</a></li>
+      <li><a href="https://github.com/r3hab-media/field-day/issues">Support and bug reports</a></li>
+    </ul>
+    <p class="muted">Field Day collects nothing and makes no network requests of its own. Build {{BUILD_INFO}}</p>
+  </div>
+</footer>
+</body>
+</html>

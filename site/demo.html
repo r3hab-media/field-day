@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field Day Demo Form</title>
+<style>
+  /* Sticker Sheet theme: light ground, 2px ink outlines, hard offset shadows. */
+  :root { --ground: #eef0ff; --paper: #fff; --ink: #111; --muted: #3d3d52; --yellow: #ffd43b; --green-soft: #e3fff0; --blue: #2442e0; --blue-soft: #dfe4ff;
+          --line: 2px solid var(--ink); --shadow: 3px 3px 0 var(--ink); }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; background: var(--ground); color: var(--ink); }
+  h1, h2 { font-weight: 800; letter-spacing: -.02em; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  form { background: var(--paper); border: var(--line); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); padding: .4rem 1.25rem 1.25rem; }
+  label { display: block; margin: .8rem 0 .2rem; font-weight: 700; }
+  input:not([type=checkbox]):not([type=radio]), select, textarea { width: 100%; padding: .45rem; box-sizing: border-box; border: var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); font: inherit; }
+  input[type=range] { border: 0 !important; padding: 0 !important; accent-color: var(--blue); }
+  input[type=checkbox], input[type=radio] { accent-color: var(--blue); }
+  fieldset { border: var(--line); border-radius: 10px; margin-top: .8rem; }
+  legend { font-weight: 700; padding: 0 .3rem; }
+  fieldset label { display: inline; font-weight: normal; margin-right: 1rem; }
+  .hp { position: absolute; left: -9999px; }
+  .combo { position: relative; }
+  .combo [role=combobox] { border: var(--line); padding: .45rem; border-radius: 8px; cursor: pointer; background: var(--paper); }
+  .combo [role=listbox] { position: absolute; left: 0; right: 0; background: var(--paper); border: var(--line); border-radius: 8px; box-shadow: var(--shadow); margin: 4px 0 0; padding: 0; list-style: none; z-index: 5; overflow: hidden; }
+  .combo [role=option] { padding: .35rem .5rem; cursor: pointer; }
+  .combo [role=option]:hover { background: var(--blue-soft); }
+  button { margin-top: 1rem; padding: .5rem 1.2rem; background: var(--yellow); color: var(--ink); border: var(--line); border-radius: 10px; box-shadow: var(--shadow); font: inherit; font-weight: 800; cursor: pointer; }
+  button.back { background: var(--paper); }
+  button:active { transform: translate(2px, 2px); box-shadow: none; }
+  #thanks { padding: 1rem; background: var(--green-soft); border: var(--line); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); }
+  pre { background: var(--paper); border: var(--line); border-radius: 8px; padding: .8rem; font-size: .8rem; overflow: auto; }
+</style>
+</head>
+<body>
+<h1>Contact us (demo)</h1>
+<p>A two-step test form covering every control type Field Day handles. Nothing is sent anywhere.</p>
+
+<form id="contact" name="contact" novalidate>
+  <div id="step1">
+    <label for="fn">First name *</label><input id="fn" name="first_name" required>
+    <label for="ln">Last name *</label><input id="ln" name="last_name" required>
+    <label for="em">Email *</label><input id="em" name="email" type="email" required>
+    <label for="em2">Confirm email</label><input id="em2" name="email_confirm" type="email">
+    <label for="ph">Phone</label><input id="ph" name="phone" type="tel">
+    <label for="co">Company</label><input id="co" name="company">
+    <input class="hp" name="website_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <label for="topic">Topic *</label>
+    <select id="topic" name="topic" required>
+      <option value="">-- Select --</option>
+      <option>Sales</option><option>Support</option><option>Partnerships</option><option value="other">Other</option>
+    </select>
+    <div id="otherWrap" hidden><label for="other">Please specify</label><input id="other" name="topic_other"></div>
+    <button type="button" class="next">Next</button>
+  </div>
+
+  <div id="step2" hidden>
+    <fieldset>
+      <legend>Preferred contact method *</legend>
+      <label><input type="radio" name="method" value="email" required> Email</label>
+      <label><input type="radio" name="method" value="phone"> Phone</label>
+      <label><input type="radio" name="method" value="sms"> SMS</label>
+    </fieldset>
+    <fieldset>
+      <legend>Do you require electrical access?</legend>
+      <label><input type="radio" name="electric" value="yes"> Yes</label>
+      <label><input type="radio" name="electric" value="no" checked> No</label>
+    </fieldset>
+    <fieldset id="powerWrap" hidden>
+      <legend>I will...</legend>
+      <label><input type="radio" name="power_source" value="facility"> use facility electricity</label>
+      <label><input type="radio" name="power_source" value="own"> provide my own electricity</label>
+    </fieldset>
+    <fieldset>
+      <legend>Interests</legend>
+      <label><input type="checkbox" name="interests" value="cms"> CMS</label>
+      <label><input type="checkbox" name="interests" value="ai"> AI</label>
+      <label><input type="checkbox" name="interests" value="cloud"> Cloud</label>
+    </fieldset>
+    <label>Region (custom dropdown)</label>
+    <div class="combo">
+      <div role="combobox" id="region" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="regionList">Choose a region</div>
+      <ul role="listbox" id="regionList" hidden>
+        <li role="option">North America</li><li role="option">Europe</li><li role="option">Asia Pacific</li><li role="option">Latin America</li>
+      </ul>
+      <input type="hidden" name="region" id="regionValue">
+    </div>
+    <label for="date">Preferred meeting date</label><input id="date" name="meeting_date" type="date">
+    <label for="seats">Number of seats</label><input id="seats" name="seats" type="number" min="1" max="500" step="1">
+    <label for="budget">Budget (range)</label><input id="budget" name="budget" type="range" min="0" max="100000" step="5000">
+    <label for="file">Attachment</label><input id="file" name="attachment" type="file" accept=".pdf">
+    <label for="msg">Message *</label><textarea id="msg" name="message" maxlength="500" required></textarea>
+    <p><label style="display:inline;font-weight:normal"><input type="checkbox" name="consent" required> I agree to the privacy policy *</label></p>
+    <button type="button" class="back">Back</button>
+    <button type="submit">Submit</button>
+  </div>
+</form>
+
+<div id="thanks" hidden><h2>Thank you!</h2><p>Your submission was received.</p><pre id="dump"></pre></div>
+
+<script>
+  const form = document.getElementById('contact');
+  document.getElementById('topic').addEventListener('change', (e) => { document.getElementById('otherWrap').hidden = e.target.value !== 'other'; });
+  document.querySelectorAll('input[name=electric]').forEach((r) => r.addEventListener('change', () => {
+    document.getElementById('powerWrap').hidden = document.querySelector('input[name=electric]:checked').value !== 'yes';
+  }));
+  form.querySelector('.next').onclick = () => {
+    const missing = [...document.querySelectorAll('#step1 [required]')].filter((el) => !el.value);
+    if (missing.length) { alert('Please complete required fields'); return; }
+    document.getElementById('step1').hidden = true;
+    document.getElementById('step2').hidden = false;
+  };
+  form.querySelector('.back').onclick = () => { document.getElementById('step1').hidden = false; document.getElementById('step2').hidden = true; };
+
+  const combo = document.getElementById('region');
+  const list = document.getElementById('regionList');
+  combo.addEventListener('mousedown', () => { list.hidden = !list.hidden; combo.setAttribute('aria-expanded', String(!list.hidden)); });
+  list.addEventListener('click', (e) => {
+    const opt = e.target.closest('[role=option]');
+    if (!opt) return;
+    combo.textContent = opt.textContent;
+    document.getElementById('regionValue').value = opt.textContent;
+    list.hidden = true;
+    combo.setAttribute('aria-expanded', 'false');
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = {};
+    for (const [k, v] of new FormData(form)) data[k] = v instanceof File ? `${v.name} (${v.size} bytes)` : (k in data ? [].concat(data[k], v) : v);
+    form.hidden = true;
+    document.getElementById('dump').textContent = JSON.stringify(data, null, 2);
+    document.getElementById('thanks').hidden = false;
+  });
+</script>
+</body>
+</html>

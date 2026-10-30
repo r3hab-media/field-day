@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy · Field Day</title>
+<meta name="description" content="Field Day collects no personal information, has no analytics or tracking, and makes no network requests of its own.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="logo.svg" alt="" width="42" height="42">Field Day</a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="./#ways">Get it</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+      <a href="https://github.com/r3hab-media/field-day">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <article class="card prose">
+    <h1>Privacy policy</h1>
+    <p class="muted">Last updated: October 29, 2026</p>
+    <p>Field Day is a browser extension (and bookmarklet) for testing web forms. It fills a form on the page you're viewing with made-up test data and, if you ask it to, submits that form.</p>
+
+    <h2>The short version</h2>
+    <div class="note ok">
+      <p>Field Day doesn't collect, store or send any personal information to its developer or to anyone else. It has no accounts, no analytics and no tracking, and it makes no network requests of its own.</p>
+    </div>
+
+    <h2>What it reads</h2>
+    <p>When you open Field Day on a page (from the right-click menu or the toolbar button), it reads that page's forms: field names, labels, options and which fields are required. It does this only on the page where you opened it, and only to fill in the form. Nothing it reads leaves your browser.</p>
+
+    <h2>What it creates</h2>
+    <p>The names, email addresses, phone numbers, addresses and messages it types are made up on your computer. They aren't real people's details. If you set up an email pattern or pinned values, those are used instead.</p>
+
+    <h2>What it sends</h2>
+    <p>Field Day sends nothing to its developer. When you choose to submit a form, the form goes to the website that form belongs to, exactly as if you had filled it in and clicked Submit yourself. What that website does with the submission is covered by its own privacy policy.</p>
+
+    <h2>What it stores</h2>
+    <ul>
+      <li><b>Your settings</b> (email pattern, pinned values and the options you ticked) are saved in your browser's extension storage on your computer, so they're there next time. The bookmarklet saves them in the page's local storage instead.</li>
+      <li><b>Progress of a multi-run test</b> (which runs are done and their results) is kept in the tab's session storage while it runs, so it survives page reloads. It's removed when the run finishes or the tab is closed.</li>
+      <li><b>A "reopen the panel" flag</b> for the current tab is kept in the extension's session storage during a multi-run test and cleared after the page reloads.</li>
+    </ul>
+    <p>None of this is synced, shared or sent anywhere. Removing the extension deletes its storage.</p>
+
+    <h2>Permissions</h2>
+    <ul>
+      <li><b>Access to all websites:</b> so Field Day can fill forms on whichever page you choose, including forms embedded in a frame from another website (for example, a HubSpot form), and reopen its panel after a test reloads the page.</li>
+      <li><b>Active tab:</b> to work on the tab you opened it from.</li>
+      <li><b>Scripting:</b> to add its form filler and panel to the page when you open it.</li>
+      <li><b>Context menus:</b> to add "Field Day: fill a form on this page" to the right-click menu.</li>
+      <li><b>Storage:</b> to save your settings and the progress of multi-run tests, as described above.</li>
+    </ul>
+
+    <h2>Changes</h2>
+    <p>If this policy changes, the new version will be posted here with a new date.</p>
+
+    <h2>Contact</h2>
+    <p>Questions or problems: <a href="https://github.com/r3hab-media/field-day/issues">open an issue on GitHub</a>.</p>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <ul>
+      <li><a href="./">Home</a></li>
+      <li><a href="demo.html">Demo form</a></li>
+      <li><a href="https://github.com/r3hab-media/field-day">Source on GitHub</a></li>
+      <li><a href="https://github.com/r3hab-media/field-day/issues">Support and bug reports</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>

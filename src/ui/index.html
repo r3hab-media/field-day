@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field Day</title>
+<style>
+  /* Sticker Sheet theme: light ground, 2px ink outlines, hard offset shadows. */
+  :root {
+    --ground: #eef0ff; --paper: #fff; --ink: #111; --muted: #3d3d52;
+    --yellow: #ffd43b; --yellow-soft: #fff4c2; --pink: #ff6fae; --pink-soft: #ffe0ee;
+    --green: #2bd67b; --green-soft: #e3fff0; --blue: #2442e0; --blue-soft: #dfe4ff;
+    --line: 2px solid var(--ink); --shadow: 3px 3px 0 var(--ink); --shadow-sm: 2px 2px 0 var(--ink);
+    --mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--ground); color: var(--ink); }
+  main { max-width: 860px; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; }
+  h3 { font-weight: 800; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .card { background: var(--paper); border: var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  label { display: block; font-size: .85rem; font-weight: 700; margin: .6rem 0 .25rem; }
+  input[type=text], input[type=url], textarea, select { box-sizing: border-box; padding: .5rem; border: var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); font: inherit; }
+  input[type=text], input[type=url], textarea { width: 100%; }
+  select { padding: .2rem .4rem; }
+  input[type=checkbox], input[type=radio] { accent-color: var(--blue); }
+  textarea { min-height: 4.5rem; font-family: var(--mono); font-size: .85rem; }
+  code { font-family: var(--mono); }
+  .row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+  .row input[type=url] { flex: 1; }
+  .checks { display: flex; flex-wrap: wrap; gap: .6rem 1.25rem; margin: .8rem 0 .4rem; font-size: .9rem; }
+  .checks label { display: inline; font-weight: 600; margin: 0; }
+  button { background: var(--yellow); color: var(--ink); border: var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: .5rem 1rem; font: inherit; font-weight: 800; cursor: pointer; transition: transform .08s ease, box-shadow .08s ease; }
+  button.secondary { background: var(--paper); }
+  #close { margin-bottom: 2rem; }
+  button:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+  button:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+  button:disabled { opacity: .5; cursor: progress; }
+  .form-item { border: var(--line); border-radius: 10px; padding: .6rem .8rem; margin: .6rem 0; display: flex; gap: .6rem; cursor: pointer; background: var(--paper); }
+  .form-item:has(input:checked) { background: var(--blue-soft); box-shadow: var(--shadow-sm); }
+  .muted { color: var(--muted); font-size: .85rem; }
+  .tag { display: inline-block; font-size: .72rem; font-weight: 800; padding: 0 .5rem; border: var(--line); border-radius: 999px; background: var(--blue-soft); margin-left: .3rem; }
+  .tag.warn { background: var(--pink); transform: rotate(3deg); }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin: .6rem 0; }
+  td, th { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid #c9cce6; vertical-align: top; }
+  th { border-bottom: var(--line); font-weight: 800; }
+  tr.err td { background: var(--pink-soft); }
+  .status { padding: .6rem .8rem; border: var(--line); border-radius: 10px; margin-bottom: .8rem; white-space: pre-line; background: var(--paper); font-weight: 600; }
+  .ok { background: var(--green-soft); } .warnbox { background: var(--yellow-soft); } .status.err { background: var(--pink-soft); }
+  details { margin-top: .4rem; }
+  details summary { cursor: pointer; font-size: .9rem; font-weight: 700; }
+  pre { background: var(--ground); border: var(--line); padding: .6rem; border-radius: 8px; font-family: var(--mono); font-size: .8rem; overflow: auto; }
+  #planList { font-size: .85rem; padding-left: 1.4rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Field Day</h1>
+
+  <div class="card">
+    <label for="url">Form URL</label>
+    <div class="row">
+      <input id="url" type="url" placeholder="https://example.com/contact" autofocus>
+      <button id="open">Load forms</button>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" id="submit" checked> Submit after filling</label>
+      <label id="entriesWrap">Entries
+        <select id="entries">
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="conditionals"> Search for conditionals</label>
+      <label title="When running multiple entries or conditional runs"><input type="checkbox" id="auto"> Auto-continue to the next submission</label>
+      <label><input type="checkbox" id="headless"> Headless (hidden browser)</label>
+    </div>
+    <details>
+      <summary>Options</summary>
+      <label for="email">Email pattern (tokens: {random} {timestamp} {first} {last})</label>
+      <input id="email" type="text" placeholder="qa+{random}@yourdomain.com">
+      <label for="overrides">Pinned values, one per line: <code>field=value</code> (matches name, id, or label)</label>
+      <textarea id="overrides" placeholder="company=Field Day QA&#10;country=United States"></textarea>
+    </details>
+  </div>
+
+  <div class="card" id="formsCard" hidden>
+    <div class="row" style="justify-content:space-between">
+      <strong>Forms on page</strong>
+      <div class="row">
+        <button class="secondary" id="rescan">Rescan</button>
+        <button id="fill">Fill form</button>
+      </div>
+    </div>
+    <div id="forms"></div>
+  </div>
+
+  <div class="card" id="resultCard" hidden>
+    <div id="status"></div>
+    <div id="captchaActions" class="row" hidden>
+      <button id="doSubmit">I solved it, submit now</button>
+      <button class="secondary" id="manual">I submitted it myself</button>
+    </div>
+    <div id="coverage" hidden>
+      <h3>Conditionals found</h3>
+      <pre id="tree"></pre>
+      <p id="planSummary"></p>
+      <ol id="planList"></ol>
+      <button id="runCoverage"></button>
+      <div id="coverageResults"></div>
+    </div>
+    <div id="log"></div>
+    <div id="entryResults"></div>
+  </div>
+
+  <button class="secondary" id="close">Close browser</button>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
+const SETTINGS = 'form-tester-settings';
+
+const saved = JSON.parse(localStorage.getItem(SETTINGS) || '{}');
+for (const k of ['url', 'email', 'overrides']) if (saved[k]) $(k).value = saved[k];
+for (const k of ['submit', 'headless', 'conditionals', 'auto']) if (k in saved) $(k).checked = saved[k];
+if (saved.entries) $('entries').value = saved.entries;
+const syncEntries = () => { $('entriesWrap').hidden = $('conditionals').checked; };
+$('conditionals').addEventListener('change', syncEntries);
+syncEntries();
+function persist() {
+  localStorage.setItem(SETTINGS, JSON.stringify({
+    url: $('url').value, email: $('email').value, overrides: $('overrides').value,
+    submit: $('submit').checked, headless: $('headless').checked, conditionals: $('conditionals').checked,
+    entries: $('entries').value, auto: $('auto').checked,
+  }));
+}
+
+function runResultsTable(results, firstCol) {
+  return el('table', {},
+    el('tr', {}, el('th', { textContent: firstCol }), el('th', { textContent: 'Details' }), el('th', { textContent: 'Result' })),
+    ...results.map((e) => el('tr', {},
+      el('td', { textContent: e.run }),
+      el('td', { textContent: e.choices.join('; ') + (e.email ? ` (${e.email})` : '') }),
+      el('td', { textContent: e.status + (e.confirmation ? ` - ${e.confirmation.slice(0, 80)}` : '') + (e.errors.length ? ` - ${e.errors.join('; ')}` : '') }))));
+}
+
+function summarize(results) {
+  const ok = results.filter((e) => ['submitted', 'submitted-manually', 'filled'].includes(e.status)).length;
+  showStatus(ok === results.length ? 'ok' : 'warnbox', `Done: ${ok} of ${results.length} succeeded.`);
+}
+
+// Shows results so far plus Run next / Continue / Stop while submissions remain.
+function renderQueue(r, target, noun) {
+  const parts = [runResultsTable(r.results, noun)];
+  if (r.remaining > 0) {
+    const done = r.total - r.remaining;
+    const cont = el('button', { textContent: r.lastFailed ? 'Continue' : `Run next (${done + 1} of ${r.total})` });
+    const stop = el('button', { className: 'secondary', textContent: 'Stop' });
+    cont.onclick = () => runQueue('next', {}, target, noun);
+    stop.onclick = async () => {
+      await api('stop').catch(() => {});
+      summarize(r.results);
+      target.replaceChildren(runResultsTable(r.results, noun));
+    };
+    parts.push(el('div', { className: 'row' }, cont, stop));
+    if (r.lastFailed) showStatus('warnbox', `${noun} ${done} wasn't confirmed as submitted. Continue with the rest, or stop?`);
+    else showStatus('ok', `${done} of ${r.total} done. Check the browser window, then run the next one.`);
+  } else summarize(r.results);
+  target.replaceChildren(...parts);
+}
+
+async function runQueue(name, body, target, noun) {
+  persist();
+  try {
+    showStatus('', $('auto').checked
+      ? 'Running… each submission reloads the form. This takes about 20–40 seconds per submission.'
+      : 'Running one submission…');
+    renderQueue(await api(name, { ...body, auto: $('auto').checked }), target, noun);
+  } catch (e) { showStatus('err', e.message); }
+}
+
+async function api(name, body = {}) {
+  document.querySelectorAll('button').forEach((b) => (b.disabled = true));
+  try {
+    const r = await fetch('/api/' + name, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || r.statusText);
+    return data;
+  } finally {
+    document.querySelectorAll('button').forEach((b) => (b.disabled = false));
+  }
+}
+
+function showStatus(cls, text) {
+  $('resultCard').hidden = false;
+  $('status').replaceChildren(el('div', { className: 'status ' + cls, textContent: text }));
+}
+
+function renderForms(forms) {
+  $('formsCard').hidden = false;
+  const box = $('forms');
+  if (!forms.length) { box.replaceChildren(el('p', { className: 'muted', textContent: 'No forms found. Dismiss any popups in the browser window, then Rescan.' })); return; }
+  box.replaceChildren(...forms.map((f, i) => {
+    const title = f.heading || f.id || f.name || (f.kind === 'loose' ? 'Fields outside a <form>' : 'Untitled form');
+    const tags = [];
+    if (f.inIframe) tags.push(el('span', { className: 'tag', textContent: 'iframe: ' + new URL(f.frameUrl).host }));
+    if (f.captcha) tags.push(el('span', { className: 'tag warn', textContent: 'CAPTCHA' }));
+    return el('label', { className: 'form-item' },
+      el('input', { type: 'radio', name: 'form', value: f.id, checked: i === 0 || forms.length === 1 }),
+      el('div', {},
+        el('div', {}, el('strong', { textContent: title }), ` · ${f.fieldCount} fields`, ...tags),
+        el('div', { className: 'muted', textContent: f.preview.join(' | ') })));
+  }));
+}
+
+function renderLog(r) {
+  const rows = [];
+  for (const s of r.steps || []) {
+    if (r.steps.length > 1) rows.push(el('tr', {}, el('th', { colSpan: 3, textContent: 'Step ' + s.step })));
+    for (const f of s.filled) rows.push(el('tr', {}, el('td', { textContent: f.kind }), el('td', { textContent: f.field }), el('td', { textContent: f.value })));
+    for (const e of s.errors) rows.push(el('tr', { className: 'err' }, el('td', { textContent: 'error' }), el('td', { textContent: e.field }), el('td', { textContent: e.error })));
+  }
+  const parts = [];
+  if (rows.length) parts.push(el('table', {}, el('tr', {}, el('th', { textContent: 'Type' }), el('th', { textContent: 'Field' }), el('th', { textContent: 'Value' })), ...rows));
+  if (r.invalid?.length) {
+    parts.push(el('p', { className: 'status warnbox', textContent: 'Still failing browser validation: ' + r.invalid.map((v) => `${v.field} (${v.message})`).join('; ') }));
+  }
+  $('log').replaceChildren(...parts);
+}
+
+function renderOutcome(r) {
+  $('captchaActions').hidden = r.status !== 'captcha';
+  if (r.status === 'captcha') showStatus('warnbox', `${r.captcha.kind} detected. Solve it in the browser window, then choose an option below.`);
+  else if (r.status === 'filled') showStatus('ok', 'Filled. Not submitted.');
+  else if (r.status === 'no-submit-button') showStatus('err', 'Filled, but no submit button was found.');
+  else if (r.status === 'not-submitted') showStatus('err', `Clicked "${r.button}", but the form is still showing. It probably wasn't submitted.${r.errors?.length ? '\nPage errors:\n- ' + r.errors.join('\n- ') : ''}`);
+  else showStatus('ok', `Submitted${r.button ? ` via "${r.button}"` : ''}. Now at: ${r.finalUrl}${r.confirmation ? `\nPage says: ${r.confirmation}` : ''}`);
+}
+
+$('open').onclick = async () => {
+  persist();
+  try {
+    showStatus('', 'Opening…');
+    const r = await api('open', { url: $('url').value.trim(), headless: $('headless').checked });
+    renderForms(r.forms);
+    showStatus('ok', `Loaded ${r.finalUrl}. Found ${r.forms.length} form(s).`);
+    $('log').replaceChildren();
+  } catch (e) { showStatus('err', e.message); }
+};
+$('url').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('open').click(); });
+$('rescan').onclick = async () => {
+  try { renderForms((await api('scan')).forms); } catch (e) { showStatus('err', e.message); }
+};
+$('fill').onclick = async () => {
+  persist();
+  const formId = document.querySelector('input[name=form]:checked')?.value;
+  if (!formId) return showStatus('err', 'Choose a form first.');
+  const opts = { formId, submit: $('submit').checked, emailPattern: $('email').value, overrides: $('overrides').value };
+  $('coverage').hidden = true;
+  $('entryResults').replaceChildren();
+  try {
+    if ($('conditionals').checked) {
+      showStatus('', 'Searching for conditionals (trying each option, this can take a minute)…');
+      const r = await api('discover', opts);
+      renderLog(r);
+      renderDiscovery(r);
+      return;
+    }
+    const count = Number($('entries').value);
+    if (count > 1) {
+      $('log').replaceChildren();
+      $('captchaActions').hidden = true;
+      return runQueue('entries', { ...opts, count }, $('entryResults'), 'Entry');
+    }
+    showStatus('', 'Filling…');
+    const r = await api('fill', opts);
+    renderLog(r);
+    renderOutcome(r);
+  } catch (e) { showStatus('err', e.message); }
+};
+
+function renderDiscovery(r) {
+  $('captchaActions').hidden = true;
+  if (!r.conditionals.length) return showStatus('ok', 'No conditionals found. The form was filled but not submitted.');
+  showStatus('ok', `Found ${r.conditionals.length} conditional field(s). Review the plan below.`);
+  $('coverage').hidden = false;
+  $('tree').textContent = r.tree.join('\n');
+  $('planSummary').textContent = `${r.plan.branchCount} branches, covered by ${r.plan.runs.length} run(s). Each run reloads the form and forces these choices (everything else stays random):`;
+  $('planList').replaceChildren(...r.plan.runs.map((run) => el('li', { textContent: run.choices.join('; ') })));
+  $('runCoverage').textContent = $('submit').checked ? `Run ${r.plan.runs.length} submissions` : `Fill ${r.plan.runs.length} times (no submit)`;
+  $('coverageResults').replaceChildren();
+}
+
+$('runCoverage').onclick = () => runQueue('coverage',
+  { submit: $('submit').checked, emailPattern: $('email').value, overrides: $('overrides').value },
+  $('coverageResults'), 'Run');
+$('doSubmit').onclick = async () => { try { renderOutcome(await api('submit')); } catch (e) { showStatus('err', e.message); } };
+$('manual').onclick = async () => { try { renderOutcome(await api('manual')); } catch (e) { showStatus('err', e.message); } };
+$('close').onclick = async () => { await api('close').catch(() => {}); $('formsCard').hidden = true; showStatus('', 'Browser closed.'); };
+</script>
+</body>
+</html>

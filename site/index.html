@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Field Day: test any web form in one click</title>
-<meta name="description" content="Field Day fills web forms with realistic test data, steps through multi-step forms, finds conditional fields, and submits. A browser extension for Edge and Chrome, plus a bookmarklet.">
+<meta name="description" content="Field Day fills web forms with realistic test data, steps through multi-step forms, finds conditional fields, and submits. A browser extension for Edge and Chrome, plus a local Playwright tool.">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="site.css">
 </head>
@@ -18,6 +18,7 @@
       <a href="#ways">Get it</a>
       <a href="privacy.html">Privacy</a>
       <a href="https://github.com/r3hab-media/field-day">GitHub</a>
+      <a href="https://buymeacoffee.com/r3habmedia">☕ Buy me a coffee</a>
     </nav>
   </div>
 </header>
@@ -72,25 +73,13 @@
   </section>
 
   <section class="wrap" id="ways" aria-labelledby="ways-title">
-    <h2 id="ways-title">Three ways to use it</h2>
+    <h2 id="ways-title">Two ways to use it</h2>
     <ul class="cards">
       <li class="card">
         <span class="tag">Recommended</span>
         <h3>Browser extension</h3>
         <p>For Edge and Chrome. Right-click any page and choose <b>Field Day: fill a form on this page</b>, or click its toolbar button. It reaches forms embedded from other websites, and its panel reopens by itself when a test reloads the page.</p>
         <p>Coming soon to the Chrome Web Store and Edge Add-ons. Until then, <a href="https://github.com/r3hab-media/field-day#option-1-the-browser-extension-recommended">install it from the source</a>.</p>
-      </li>
-      <li class="card">
-        <span class="tag blue">No install</span>
-        <h3>Bookmarklet</h3>
-        <p>Drag this button to your bookmarks bar:</p>
-        <p><a class="btn drag" href="{{BOOKMARKLET_HREF}}" onclick="alert('Drag this to your bookmarks bar, then click it on a page with a form.'); return false;">Field Day</a></p>
-        <ol>
-          <li>Open the page with the form.</li>
-          <li>Click the <b>Field Day</b> bookmark. A panel lists every form on the page.</li>
-          <li>Pick a form (hover to highlight it), set options, and click <b>Fill form</b>.</li>
-        </ol>
-        <p class="muted">Bookmarklets can't reach forms inside frames from other websites, and strict security settings may block them. Use the extension or the local tool for those.</p>
       </li>
       <li class="card">
         <span class="tag green">For repeat runs</span>
@@ -102,6 +91,16 @@ npm install
 npm run ui</code></pre>
       </li>
     </ul>
+  </section>
+
+  <section class="wrap" aria-labelledby="support">
+    <div class="card coffee-card">
+      <div>
+        <h2 id="support">Free, with no ads or tracking</h2>
+        <p>Field Day is a one-person project. If it saves you time, you can buy me a coffee to say thanks.</p>
+      </div>
+      <a class="btn" href="https://buymeacoffee.com/r3habmedia">☕ Buy me a coffee</a>
+    </div>
   </section>
 
   <section class="wrap" aria-labelledby="careful">
@@ -119,6 +118,7 @@ npm run ui</code></pre>
       <li><a href="demo.html">Demo form</a></li>
       <li><a href="https://github.com/r3hab-media/field-day">Source on GitHub</a></li>
       <li><a href="https://github.com/r3hab-media/field-day/issues">Support and bug reports</a></li>
+      <li><a href="https://buymeacoffee.com/r3habmedia">Buy me a coffee</a></li>
     </ul>
     <p class="muted">Field Day collects nothing and makes no network requests of its own. Build {{BUILD_INFO}}</p>
   </div>

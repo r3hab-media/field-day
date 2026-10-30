@@ -227,11 +227,6 @@ p {
   background: var(--paper);
 }
 
-/* The bookmarklet is dragged, not clicked */
-.btn.drag {
-  cursor: grab;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .btn {
     transition: transform 0.12s, box-shadow 0.12s;
@@ -334,6 +329,24 @@ section {
 
 .tag.blue {
   background: var(--blue-soft);
+}
+
+/* Support callout */
+.coffee-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  background: var(--yellow-soft);
+}
+
+.coffee-card h2 {
+  font-size: 1.4rem;
+}
+
+.coffee-card p {
+  margin: 0;
 }
 
 /* Callouts: the panel's status boxes */

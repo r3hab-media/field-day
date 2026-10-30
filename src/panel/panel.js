@@ -1,7 +1,6 @@
-// Field Day panel. Runs as the bookmarklet (page world) or as the extension's content script.
+// Field Day panel. Injected by the extension's service worker as a content script.
 (async function () {
   const FT = globalThis.__FormTester;
-  const EXT = typeof chrome !== 'undefined' && !!chrome.runtime?.id;
   const HOST_ID = '__form-tester-panel';
   const SETTINGS = 'form-tester-settings';
   const COVERAGE = 'form-tester-coverage';
@@ -17,17 +16,11 @@
   }
 
   async function loadSettings() {
-    try {
-      if (EXT) return (await chrome.storage.local.get(SETTINGS))[SETTINGS] || {};
-      return JSON.parse(localStorage.getItem(SETTINGS) || '{}');
-    } catch { return {}; }
+    try { return (await chrome.storage.local.get(SETTINGS))[SETTINGS] || {}; } catch { return {}; }
   }
 
   function saveSettings(s) {
-    try {
-      if (EXT) chrome.storage.local.set({ [SETTINGS]: s });
-      else localStorage.setItem(SETTINGS, JSON.stringify(s));
-    } catch { /* storage blocked */ }
+    chrome.storage.local.set({ [SETTINGS]: s }).catch(() => {});
   }
 
   // Runs need a fresh page each time, so progress survives reloads in sessionStorage.
@@ -57,15 +50,8 @@
     };
   }
 
+  // The page itself is a local target; forms in frames (any origin) are reached through the service worker.
   const docs = [document];
-  if (!EXT) {
-    for (const f of document.querySelectorAll('iframe')) {
-      try { if (f.contentDocument?.body) docs.push(f.contentDocument); } catch { /* cross-origin */ }
-    }
-  }
-  const crossOrigin = EXT ? 0 : [...document.querySelectorAll('iframe')].filter((f) => {
-    try { return !f.contentDocument; } catch { return true; }
-  }).filter((f) => !/recaptcha|hcaptcha|cloudflare/.test(f.src) && f.getBoundingClientRect().height > 80).length;
 
   // ---------- UI ----------
   const host = document.createElement('div');
@@ -84,6 +70,9 @@
     header b { font-size: 15px; font-weight: 800; letter-spacing: -.01em; }
     header button { background: #fff; border: 2px solid #111; border-radius: 8px; color: #111; width: 28px; height: 28px; font-size: 18px; line-height: 1; cursor: pointer; }
     header button:hover { background: #ff6fae; }
+    header nav { display: flex; align-items: center; gap: 8px; }
+    .coffee { font-size: 11px; font-weight: 800; color: #111; text-decoration: none; background: #ffd43b; border: 2px solid #111; border-radius: 999px; padding: 2px 9px; }
+    .coffee:hover { background: #ff6fae; }
     :focus-visible { outline: 3px solid #2442e0; outline-offset: 2px; }
     section { padding: 10px 12px; }
     label { font-weight: 600; }
@@ -112,7 +101,7 @@
     ol { padding-left: 18px; margin: 4px 0; font-size: 12px; }
   </style>
   <div class="p">
-    <header><b>Field Day</b><button id="x" title="Close">&times;</button></header>
+    <header><b>Field Day</b><nav><a class="coffee" href="https://buymeacoffee.com/r3habmedia" target="_blank" rel="noopener">☕ Buy me a coffee</a><button id="x" title="Close">&times;</button></nav></header>
     <section>
       <div id="forms"></div>
       <div class="row"><label><input type="checkbox" id="submit" checked> Submit after filling</label></div>
@@ -167,14 +156,12 @@
       if (di > 0) try { frameUrl = doc.location.href; } catch { /* ignore */ }
       FT.listForms(doc).forEach((f) => found.push({ ...f, key: `L${di}:${f.index}`, t, frameUrl, framed: di > 0 }));
     });
-    if (EXT) {
-      try {
-        for (const fr of await ext('list-frames')) {
-          const t = remoteTarget(fr.frameId);
-          fr.forms.forEach((f) => found.push({ ...f, key: `R${fr.frameId}:${f.index}`, t, frameUrl: fr.url, framed: true }));
-        }
-      } catch { /* frames unavailable */ }
-    }
+    try {
+      for (const fr of await ext('list-frames')) {
+        const t = remoteTarget(fr.frameId);
+        fr.forms.forEach((f) => found.push({ ...f, key: `R${fr.frameId}:${f.index}`, t, frameUrl: fr.url, framed: true }));
+      }
+    } catch { /* frames unavailable */ }
     items = found;
     renderForms();
     return items;
@@ -199,9 +186,6 @@
       }
       box.append(item);
     });
-    if (crossOrigin) {
-      box.append(el('div', { className: 'st w', textContent: `${crossOrigin} cross-origin iframe(s) can't be reached from a bookmarklet. If the form is inside one, use the Field Day extension or open the iframe URL directly.` }));
-    }
   }
 
   const selectedItem = () => items.find((i) => i.key === root.querySelector('input[name=f]:checked')?.value);
@@ -300,13 +284,12 @@
   // ---------- multi-run (entries / conditionals) ----------
   async function reloadForNext(c) {
     saveCoverage(c);
-    if (EXT) await ext('resume-on-load').catch(() => {});
+    await ext('resume-on-load').catch(() => {});
     location.reload();
   }
 
   function startRuns(c, pageIsFresh) {
     saveCoverage(c);
-    if (c.auto && !EXT) return runAuto(c, pageIsFresh);
     return pageIsFresh ? runStep(c) : reloadForNext(c);
   }
 
@@ -320,8 +303,7 @@
     }, false);
     const how = $('auto').checked
       ? 'Auto-continue is on: each run loads the form fresh and the next one starts once it is confirmed.'
-      : EXT ? 'The page reloads before each run, and the panel reopens by itself.'
-        : 'The page reloads before each run. Click the Field Day bookmark again after each reload to continue.';
+      : 'The page reloads before each run, and the panel reopens by itself.';
     $('out').prepend(el('div', {},
       el('div', { className: 'st ok', textContent: `Found ${nodes.length} conditional field(s):` }),
       el('pre', { textContent: FT.describeConditionals(nodes).join('\n') }),
@@ -351,8 +333,7 @@
     runBtn.onclick = () => {
       box.remove();
       c.auto = $('auto').checked;
-      if (c.auto && !EXT) runAuto(c, true);
-      else runStep(c);
+      runStep(c);
     };
   }
 
@@ -378,7 +359,7 @@
     c.i++;
     saveCoverage(c);
     if (c.i >= c.runs.length) return showCoverage(c);
-    if (c.auto && EXT) {
+    if (c.auto) {
       if (!OK.includes(result) && !(await askContinue(`${noun(c)} ${c.i} wasn't confirmed as submitted. Continue with the rest, or stop?`))) {
         c.i = c.runs.length;
         return showCoverage(c);
@@ -390,7 +371,7 @@
     const next = el('button', { className: 'btn', textContent: `Reload for ${noun(c).toLowerCase()} ${c.i + 1} of ${c.runs.length}` });
     next.onclick = () => reloadForNext(c);
     $('out').prepend(el('div', { className: 'row' }, next),
-      el('div', { className: 'm', textContent: EXT ? 'The panel reopens by itself after the page reloads.' : 'After the page reloads, click the Field Day bookmark again to continue.' }));
+      el('div', { className: 'm', textContent: 'The panel reopens by itself after the page reloads.' }));
   }
 
   async function startEntries() {
@@ -401,50 +382,6 @@
     return startRuns({
       url: location.href, target: targetRef(item), runs, i: 0, results: [], submit: $('submit').checked, label: 'Entry', auto: $('auto').checked,
     }, true);
-  }
-
-  // Bookmarklet only: loads the form in a full-page frame and reloads just the frame, so this panel survives.
-  async function loadFrame(frame, url) {
-    await new Promise((resolve) => { frame.onload = resolve; setTimeout(resolve, 30000); frame.src = url; });
-    let doc;
-    try { doc = frame.contentDocument; } catch { return null; }
-    if (!doc?.body) return null;
-    for (let t = 0; t < 20000 && !FT.formRoots(doc).length; t += 500) await sleep(500);
-    if (!FT.formRoots(doc).length) return null;
-    await sleep(1000);
-    return doc;
-  }
-
-  async function runAuto(c, pageIsFresh) {
-    const fallback = (why) => {
-      status('w', `${why} Running one at a time instead.`);
-      c.auto = false;
-      return pageIsFresh ? runStep(c) : reloadForNext(c);
-    };
-    if (c.target.frameUrl !== null) return fallback('Auto-continue only works for forms on the main page, not inside an embedded frame.');
-    const frame = document.createElement('iframe');
-    frame.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;border:0;background:#fff;z-index:2147483646;';
-    document.documentElement.appendChild(frame);
-    try {
-      while (c.i < c.runs.length) {
-        const doc = await loadFrame(frame, c.url);
-        if (!doc) { frame.remove(); return fallback("This site can't be loaded inside a frame, so auto-continue isn't available here."); }
-        const result = await run({ t: localTarget(doc), index: c.target.index }, {
-          forced: c.runs[c.i].forced, submit: c.submit, discover: false,
-          heading: `${noun(c)} ${c.i + 1} of ${c.runs.length} (auto-continue)`,
-        });
-        c.results.push({ choices: c.runs[c.i].choices, status: result });
-        c.i++;
-        saveCoverage(c);
-        if (c.i < c.runs.length && !OK.includes(result)) {
-          if (!(await askContinue(`${noun(c)} ${c.i} wasn't confirmed as submitted. Continue with the rest, or stop?`))) break;
-        }
-      }
-    } finally {
-      frame.remove();
-    }
-    c.i = c.runs.length;
-    showCoverage(c);
   }
 
   // ---------- wiring ----------
@@ -462,7 +399,7 @@
   await scan();
   const pending = loadCoverage();
   if (pending) {
-    if (pending.auto && EXT && pending.i < pending.runs.length) {
+    if (pending.auto && pending.i < pending.runs.length) {
       // Wait for slow forms (e.g. Cognito) to render after the reload before continuing.
       for (let t = 0; t < 20000 && !findItem(pending.target); t += 1000) { await sleep(1000); await scan(); }
       await sleep(1000);

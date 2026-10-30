@@ -18,14 +18,13 @@ It will:
 
 ## Ways to use it
 
-| | **Browser extension** (recommended) | **Bookmarklet** | **Local app** |
-|---|---|---|---|
-| Setup | Install once in Edge or Chrome | None. Drag a button to your bookmarks bar. | Install Node.js and the project |
-| How you start | Right-click the page, or click the toolbar icon | Open the form page, click the bookmark | Paste a URL into the app |
-| Works on forms inside embedded frames from other sites (e.g. some HubSpot forms) | Yes | No | Yes |
-| Works on sites with strict security settings | Yes | Sometimes blocked | Yes |
-| Continues after each page reload by itself | Yes | Only with auto-continue | Yes |
-| Best for | Everyday testing | Computers where you can't install extensions | Repeat or unattended testing |
+| | **Browser extension** (recommended) | **Local app** |
+|---|---|---|
+| Setup | Install once in Edge or Chrome | Install Node.js and the project |
+| How you start | Right-click the page, or click the toolbar icon | Paste a URL into the app |
+| Works on forms inside embedded frames from other sites (e.g. some HubSpot forms) | Yes | Yes |
+| Continues after each page reload by itself | Yes | Yes |
+| Best for | Everyday testing | Repeat or unattended testing |
 
 ---
 
@@ -51,34 +50,7 @@ To use it on pages opened from your computer (`file://`), open the extension's *
 
 1. Open the page that has the form.
 2. **Right-click** anywhere on the page and choose **Field Day: fill a form on this page**, or click the **Field Day** toolbar icon.
-3. The same panel as the bookmarklet opens, with every option described below.
-
-What's different from the bookmarklet:
-
-- It can fill forms inside embedded frames from other websites.
-- When a run reloads the page (multiple entries, conditionals), the panel **reopens by itself**. No need to click anything to bring it back.
-- With **Auto-continue**, it reloads the real page between submissions instead of using a frame, so it works on every site.
-- Your settings (email pattern, pinned values, checkboxes) are shared across all websites.
-
-It can't run on browser pages such as `edge://` or `chrome://` pages or the extension stores. The toolbar icon shows **!** if you try.
-
----
-
-## Option 2: The bookmarklet (no install)
-
-A bookmarklet is a bookmark that runs a small tool on the page you're viewing instead of opening a website.
-
-### Set it up (one time)
-
-1. Make sure your browser's bookmarks bar is showing (**Ctrl+Shift+B** on Windows, **Cmd+Shift+B** on Mac).
-2. Go to the Field Day page: <https://r3hab-media.github.io/field-day/>
-3. Drag the yellow **Field Day** button onto your bookmarks bar.
-
-### Use it
-
-1. Open the page that has the form you want to test.
-2. Click **Field Day** in your bookmarks bar. A panel opens in the top-right corner.
-3. The panel lists every form on the page. Hover over one to highlight it, then select it.
+3. A panel opens in the top-right corner and lists every form on the page, including forms embedded from other websites. Hover over one to highlight it, then select it.
 4. Optional: open **Options** to [set a test email or fixed values](#options).
 5. Click **Fill form**.
 
@@ -88,11 +60,15 @@ If a **CAPTCHA** is detected, the form is filled but not submitted. Solve the CA
 
 To fill but not submit, untick **Submit after filling**.
 
-Want to try it first? Use the **demo form** linked on the Field Day page.
+When a run reloads the page (multiple entries, conditionals), the panel **reopens by itself**. Your settings (email pattern, pinned values, checkboxes) are remembered and shared across all websites.
+
+Want to try it first? Use the [demo form](https://r3hab-media.github.io/field-day/demo.html).
+
+It can't run on browser pages such as `edge://` or `chrome://` pages or the extension stores. The toolbar icon shows **!** if you try.
 
 ---
 
-## Option 3: The local app
+## Option 2: The local app
 
 The local app opens its own browser window, so you can watch it work.
 
@@ -199,15 +175,12 @@ Use the **Entries** dropdown to submit the same form up to **5** times in a row 
 
 The dropdown is hidden when **Search for conditionals** is ticked, because the conditionals plan decides how many submissions to make.
 
-With the **bookmarklet**, the page reloads between entries. Click the **Field Day** bookmark again after each reload to continue.
-
 ### Auto-continue
 
 When running multiple entries or a conditionals plan, tick **Auto-continue to the next submission** to run them all without stopping. Once a submission is confirmed, the form reloads and the next one starts automatically.
 
-- **Unticked (default):** one submission at a time. The localhost app shows a **Run next** button; the bookmarklet asks you to reload and click the bookmark again.
+- **Unticked (default):** one submission at a time. The extension shows a button such as **Reload for entry 2 of 3**; the local app shows **Run next**.
 - **If a submission isn't confirmed,** auto-continue pauses and asks whether to **Continue** with the rest or **Stop**.
-- **Bookmarklet:** auto-continue loads the form in a full-page frame on top of the original page and reloads only that frame, so you don't need to click the bookmark between entries. If a site refuses to load inside a frame, or the form is inside an embedded frame, it falls back to one at a time.
 
 ### Search for conditionals
 
@@ -221,20 +194,12 @@ Tick **Search for conditionals** (or use `--conditionals` on the command line) a
 
 Independent conditionals are tested side by side, so the number of submissions stays small. For example, 3 branches of one question plus 2 of another need 3 submissions, not 6. Options that reveal nothing are grouped into a single branch.
 
-With the **bookmarklet**, the page reloads before each run. Click the **Field Day** bookmark again after each reload and it picks up where it left off.
-
 ---
 
 ## Troubleshooting
 
 **"No forms found"**
 The form may still be loading, or hidden behind a popup or cookie banner. Close the popup, then click **Rescan**.
-
-**The bookmarklet mentions "cross-origin iframes"**
-The form is embedded from another website, and browsers block bookmarklets from reaching into it. Use the local app.
-
-**Clicking the bookmarklet does nothing**
-The site's security settings are blocking it. Use the local app.
 
 **"Still failing validation" appears in the results**
 Some fields didn't accept the generated value, for example a strict format rule. The message tells you which fields. Use a [pinned value](#pinned-values) to supply a valid one.
@@ -254,7 +219,7 @@ Node.js isn't installed, or the terminal was opened before installing it. Instal
 
 ```
 src/engine/engine.js      Shared fill logic (runs inside the web page)
-src/panel/panel.js        Panel UI shared by the extension and the bookmarklet
+src/panel/panel.js        Panel UI the extension injects into the page
 src/extension/            Extension manifest, service worker, and page helper
 src/extension/icons/      Logo (logo.svg, logo-small.svg) and the PNG icons rendered from it
 src/runner.js             Browser automation with Playwright
@@ -271,6 +236,12 @@ scripts/store-assets.js   Renders the icons and store images
 - `npm run build:extension` builds the extension into `dist/extension/`.
 - `npm run package` builds the extension and zips it as `dist/field-day-<version>.zip` for the Chrome Web Store and Edge Add-ons. See [store/LISTING.md](store/LISTING.md) for everything to fill in on each store.
 - `npm run store-assets` re-renders the icons from the logo and the store images from the panel on the demo form. It uses your installed Chrome.
-- `npm run build:pages` builds the GitHub Pages site and bookmarklet into `dist/`.
+- `npm run build:pages` builds the GitHub Pages site into `dist/`.
 - To test locally, open `dist/index.html` and `site/demo.html` in a browser.
 - **Publishing:** push to `main` on GitHub, then go to **Settings → Pages** and set **Source** to **GitHub Actions**. The workflow in `.github/workflows/pages.yml` builds and deploys the site automatically on every push.
+
+---
+
+## Support Field Day
+
+Field Day is free, with no ads or tracking. If it saves you time, you can [buy me a coffee](https://buymeacoffee.com/r3habmedia).

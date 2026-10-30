@@ -2,7 +2,7 @@
 
 Last updated: October 29, 2026
 
-Field Day is a browser extension (and bookmarklet) for testing web forms. It fills a form on the page you're viewing with made-up test data and, if you ask it to, submits that form.
+Field Day is a browser extension for testing web forms. It fills a form on the page you're viewing with made-up test data and, if you ask it to, submits that form.
 
 ## The short version
 
@@ -22,7 +22,7 @@ Field Day sends nothing to its developer. When you choose to submit a form, the 
 
 ## What it stores
 
-- **Your settings** (email pattern, pinned values and the options you ticked) are saved in your browser's extension storage on your computer, so they're there next time. The bookmarklet saves them in the page's local storage instead.
+- **Your settings** (email pattern, pinned values and the options you ticked) are saved in your browser's extension storage on your computer, so they're there next time.
 - **Progress of a multi-run test** (which runs are done and their results) is kept in the tab's session storage while it runs, so it survives page reloads. It's removed when the run finishes or the tab is closed.
 - **A "reopen the panel" flag** for the current tab is kept in the extension's session storage during a multi-run test and cleared after the page reloads.
 

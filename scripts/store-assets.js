@@ -1,7 +1,7 @@
 // Generates the extension icons and the store images:
 // - src/extension/icons/{16,32,48,128}.png from logo-small.svg (16, 32) and logo.svg (48, 128)
 // - store/: 1280x800 screenshots, the 440x280 and 1400x560 promo tiles, and the 300x300 logo for Edge Add-ons
-// The screenshots capture the real panel (bookmarklet mode, the same UI the extension shows) on site/demo.html.
+// The screenshots capture the real panel on site/demo.html, with chrome.* stubbed so it runs outside the extension.
 // Uses the installed Chrome through Playwright, so no browser download is needed. Pass --icons-only to skip the store images.
 import { chromium } from 'playwright';
 import { readFileSync, mkdirSync, rmSync } from 'node:fs';

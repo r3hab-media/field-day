@@ -1,4 +1,4 @@
-// Browser-side form fill engine. Shared by the Playwright runner and the bookmarklet.
+// Browser-side form fill engine. Shared by the Playwright runner and the extension.
 // Must stay dependency-free and work when evaluated as a plain script in any frame.
 (function () {
   if (globalThis.__FormTester) return;
@@ -973,7 +973,7 @@
     );
   }
 
-  // Marks the button so the caller can do a trusted click (Playwright) or click directly (bookmarklet).
+  // Marks the button so the caller can do a trusted click (Playwright) or click directly (extension).
   function prepareClick(doc, kind) {
     doc.querySelectorAll('[data-ft-click]').forEach((n) => n.removeAttribute('data-ft-click'));
     const root = resolveTarget(doc);

@@ -1,7 +1,7 @@
 {
   "name": "form-tester",
   "version": "1.0.0",
-  "description": "Fill and submit web forms with random/fake data via Playwright or a bookmarklet",
+  "description": "Fill and submit web forms with realistic test data: an Edge/Chrome extension and a Playwright CLI",
   "type": "module",
   "bin": {
     "form-tester": "src/cli.js"
@@ -20,8 +20,5 @@
   },
   "dependencies": {
     "playwright": "^1.48.0"
-  },
-  "devDependencies": {
-    "esbuild": "^0.28.2"
   }
 }
